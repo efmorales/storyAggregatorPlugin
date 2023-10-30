@@ -65,17 +65,32 @@ export default class StoryAggregatorPlugin extends Plugin {
   async updateAggregateNote(date, story) {
     const aggregateNotePath = 'All 5 Minute Stories.md';
     let aggregateNote = this.app.vault.getAbstractFileByPath(aggregateNotePath);
-
+  
     if (!(aggregateNote instanceof TFile)) {
       aggregateNote = await this.app.vault.create(aggregateNotePath, ''); // Create new note if doesn't exist
     }
-
+  
     let aggregateContent = await this.app.vault.read(aggregateNote);
-    const storyLines = story.split('\n');
-    for (const line of storyLines) {
-      aggregateContent += `\n| [${date}](${date}) | ${line} |`;
+    const storyIndex = aggregateContent.indexOf(`| [${date}](${date}) |`);
+  
+    if (storyIndex !== -1) {
+      // If the story already exists, remove it
+      const endOfStoryIndex = aggregateContent.indexOf('\n', storyIndex);
+      if (endOfStoryIndex !== -1) {
+        // If the story ends with a newline, remove it along with the story
+        aggregateContent = aggregateContent.slice(0, storyIndex) + aggregateContent.slice(endOfStoryIndex + 1);
+      } else {
+        // If the story is the last line in the file, just remove the story
+        aggregateContent = aggregateContent.slice(0, storyIndex);
+      }
     }
-
+  
+    // Add the updated story
+    if (aggregateContent !== '' && !aggregateContent.endsWith('\n')) {
+      aggregateContent += '\n';
+    }
+    aggregateContent += `| [${date}](${date}) | ${story.replace(/\n/g, ' ')} |`;
+  
     await this.app.vault.modify(aggregateNote, aggregateContent);
   }
 }
