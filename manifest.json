@@ -1,0 +1,11 @@
+{
+	"id": "story-aggregator",
+	"name": "5 Min Story Agreggator",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "This is a plugin that uses the current 'Daily Note' and aggregates the contents of the subheader '## 5 minute story' into a main table.",
+	"author": "Enzo Morales",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
