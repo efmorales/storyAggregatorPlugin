@@ -9,10 +9,12 @@ export default class StoryAggregatorPlugin extends Plugin {
   async handleFileChange(file: TFile) {
     const today = moment().format("YYYY-MM-DD");
     const dailyNotePath = today + '.md';
-
-    if (file.path === dailyNotePath) {
-      this.handleDailyUpdate();
+  
+    if (file.path !== dailyNotePath) {
+      return;
     }
+  
+    this.handleDailyUpdate();
   }
 
   async handleDailyUpdate() {
