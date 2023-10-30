@@ -20,6 +20,18 @@ export default class StoryAggregatorPlugin extends Plugin {
     const ribbonIconEl = this.addRibbonIcon('dice', 'Run Story Aggregator', (evt: MouseEvent) => {
       this.handleDailyUpdate();
     });
+
+    this.app.vault.on('modify', debounce(this.handleFileChange.bind(this), 500));
+
+  }
+
+  async handleFileChange(file: TFile) {
+    const today = moment().format("YYYY-MM-DD");
+    const dailyNotePath = today + '.md';
+
+    if (file.path === dailyNotePath) {
+      this.handleDailyUpdate();
+    }
   }
 
   async handleDailyUpdate() {
@@ -66,4 +78,18 @@ export default class StoryAggregatorPlugin extends Plugin {
 
     await this.app.vault.modify(aggregateNote, aggregateContent);
   }
+}
+
+function debounce(func: Function, wait: number) {
+  let timeout: NodeJS.Timeout;
+
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
